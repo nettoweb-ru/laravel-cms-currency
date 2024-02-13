@@ -2,7 +2,6 @@
   "name": "nettoweb/laravel-cms-currency",
   "description": "Currency support for Nettoweb content management system",
   "type": "library",
-  "version": "1.0.0",
   "license": "MIT",
   "autoload": {
     "psr-4": {
