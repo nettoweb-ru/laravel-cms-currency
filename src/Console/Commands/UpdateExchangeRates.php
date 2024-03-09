@@ -7,8 +7,8 @@ use Netto\Services\CurrencyService;
 
 class UpdateExchangeRates extends Command
 {
-    protected $signature = 'cms:currency';
-    protected $description = 'Updates currency rates.';
+    protected $signature = 'cms:refresh-currency';
+    protected $description = 'Update currency rates';
 
     /**
      * @return void
