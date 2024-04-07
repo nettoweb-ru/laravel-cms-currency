@@ -1,4 +1,4 @@
-# Currency support fpr nettoweb CMS
+# Currency support for nettoweb CMS
 
 This software provides currency support for nettoweb CMS, including exchange rates calculator.
 
