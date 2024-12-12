@@ -1,5 +1,5 @@
 <x-cms::layout.admin :title="$title" :chain="$chain">
-    <x-cms::list :url="route('admin.currency.list', [], false)" />
+    <x-cms::list :url="route('admin.currency.list', [], false)" id="currency" />
 
     @if (!empty($rates))
         <p class="header text-big">{{ __('cms-currency::main.exchange_rates') }}</p>
