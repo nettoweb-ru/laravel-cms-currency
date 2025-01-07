@@ -19,7 +19,7 @@ class CurrencyServiceProvider extends ServiceProvider
 
             $this->publishes([
                 __DIR__.'/../config/cms-currency.php' => config_path('cms-currency.php'),
-            ], 'config');
+            ], 'nettoweb-laravel-cms');
         }
 
         $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
