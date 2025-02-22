@@ -14,8 +14,8 @@ if (!function_exists('format_currency')) {
             $currency = CurrencyService::getDefaultCode();
         }
 
-        $formatter = new \NumberFormatter(app()->getLocale(), \NumberFormatter::CURRENCY);
-        $formatter->setAttribute(NumberFormatter::FRACTION_DIGITS, $precision);
+        $formatter = new \NumberFormatter(config('locale'), \NumberFormatter::CURRENCY);
+        $formatter->setAttribute(\NumberFormatter::FRACTION_DIGITS, abs($precision));
 
         return $formatter->formatCurrency($amount, $currency);
     }
