@@ -6,7 +6,6 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 use Netto\Http\Requests\CurrencyRequest as WorkRequest;
 use Netto\Models\Currency as WorkModel;
-use Netto\Services\CmsService;
 use Netto\Services\CurrencyService;
 use Netto\Traits\CrudControllerActions;
 
@@ -130,7 +129,7 @@ class CurrencyController extends Abstract\AdminCrudController
     protected function getReference($object): array
     {
         return [
-            'boolean' => CmsService::getBooleanLabels(),
+            'boolean' => get_labels_boolean(),
         ];
     }
 }
