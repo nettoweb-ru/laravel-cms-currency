@@ -18,7 +18,7 @@
     }
   ],
   "require": {
-      "nettoweb/laravel-cms": "^1.2",
+      "nettoweb/laravel-cms": "^1.2.3",
       "guzzlehttp/guzzle": "^7.8"
   },
   "require-dev": {

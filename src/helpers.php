@@ -14,7 +14,7 @@ if (!function_exists('format_currency')) {
             $currency = CurrencyService::getDefaultCode();
         }
 
-        $formatter = new \NumberFormatter(config('locale'), \NumberFormatter::CURRENCY);
+        $formatter = new \NumberFormatter(setlocale(LC_MONETARY, '0')."@numbers=latn", \NumberFormatter::CURRENCY);
         $formatter->setAttribute(\NumberFormatter::FRACTION_DIGITS, abs($precision));
 
         return $formatter->formatCurrency($amount, $currency);
