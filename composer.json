@@ -1,6 +1,6 @@
 {
   "name": "nettoweb/laravel-cms-currency",
-  "description": "Currency support for Nettoweb content management system",
+  "description": "\uD83D\uDCB1 nettoweb: currency support for content management system",
   "type": "library",
   "license": "MIT",
   "autoload": {
@@ -18,12 +18,8 @@
     }
   ],
   "require": {
-      "nettoweb/laravel-cms": "^1.2.3",
+      "nettoweb/laravel-cms": "^2",
       "guzzlehttp/guzzle": "^7.8"
-  },
-  "require-dev": {
-    "orchestra/testbench": "^8.0",
-    "phpunit/phpunit": "^10.5"
   },
   "minimum-stability": "stable",
   "extra": {

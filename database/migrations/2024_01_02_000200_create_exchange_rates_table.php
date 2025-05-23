@@ -2,12 +2,11 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\{DB, Schema};
 
 return new class extends Migration
 {
-    private const TABLE = 'cms__exchange_rates';
+    private const TABLE = 'cms_currency__exchange_rates';
     private const UNSIGNED_DECIMAL = [
         'value',
     ];
@@ -22,9 +21,12 @@ return new class extends Migration
         Schema::create($tableName, function (Blueprint $table) {
             $table->unsignedBigInteger('source_id');
             $table->unsignedBigInteger('target_id');
+            $table->smallInteger('base')->unsigned()->default(1);
             $table->decimal('value', 10, 4)->nullable()->default(0);
-            $table->foreign('source_id')->references('id')->on('cms__currencies')->onDelete('cascade')->onUpdate('cascade');
-            $table->foreign('target_id')->references('id')->on('cms__currencies')->onDelete('cascade')->onUpdate('cascade');
+            $table->dateTime('date');
+            $table->string('provider');
+            $table->foreign('source_id')->references('id')->on('cms_currency__currencies')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreign('target_id')->references('id')->on('cms_currency__currencies')->onDelete('cascade')->onUpdate('cascade');
             $table->primary(['source_id', 'target_id']);
         });
 
@@ -38,6 +40,13 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists(self::TABLE);
+        if (Schema::hasTable(self::TABLE)) {
+            Schema::table(self::TABLE, function(Blueprint $table) {
+                $table->dropForeign(self::TABLE.'_target_id_foreign');
+                $table->dropForeign(self::TABLE.'_source_id_foreign');
+            });
+
+            Schema::drop(self::TABLE);
+        }
     }
 };

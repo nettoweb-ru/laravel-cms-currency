@@ -1,8 +1,9 @@
 <?php
 return [
-    "create" => "Новая валюта",
+    "create_currency" => "Новая валюта",
     "currency" => "Валюта",
     "exchange_rate" => "Обменный курс",
     "exchange_rates" => "Обменные курсы",
-    "list" => "Валюты",
+    "exchange_provider" => "Источник данных",
+    "list_currency" => "Валюты",
 ];

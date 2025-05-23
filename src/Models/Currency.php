@@ -2,37 +2,28 @@
 
 namespace Netto\Models;
 
-use Illuminate\Database\Eloquent\Model;
-use Netto\Traits\HasDefaultAttribute;
+use Netto\Models\Abstract\Model as BaseModel;
+use Netto\Traits\{HasDefaultAttribute, IsMultiLingual};
 
-class Currency extends Model
+class Currency extends BaseModel
 {
-    use HasDefaultAttribute;
+    use HasDefaultAttribute, IsMultiLingual;
 
     public $timestamps = false;
-    public $table = 'cms__currencies';
+    public $table = 'cms_currency__currencies';
+
+    public array $multiLingual = [
+        'name',
+    ];
+
+    public string $multiLingualClass = CurrencyLang::class;
 
     protected $casts = [
         'is_default' => 'boolean',
     ];
 
     protected $attributes = [
-        'is_default' => false,
+        'is_default' => '0',
+        'sort' => 0,
     ];
-
-    /**
-     * @return void
-     */
-    public static function boot(): void
-    {
-        parent::boot();
-
-        self::saved(function($model): void {
-            $model->checkSavedDefault();
-        });
-
-        self::deleting(function($model): bool {
-            return $model->checkDeletingDefault();
-        });
-    }
 }

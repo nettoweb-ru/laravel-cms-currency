@@ -1,7 +1,7 @@
 <?php
 namespace Netto\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Model as BaseModel;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
@@ -9,10 +9,23 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property Currency $target
  */
 
-class ExchangeRate extends Model
+class ExchangeRate extends BaseModel
 {
     public $timestamps = false;
-    public $table = 'cms__exchange_rates';
+    public $table = 'cms_currency__exchange_rates';
+
+    protected $attributes = [
+        'value' => '0.0000',
+    ];
+
+    public $fillable = [
+        'source_id',
+        'target_id',
+        'base',
+        'value',
+        'date',
+        'provider',
+    ];
 
     /**
      * @return BelongsTo

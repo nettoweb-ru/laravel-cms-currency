@@ -2,82 +2,44 @@
 
 namespace Netto\Services;
 
-use Netto\Models\Currency;
-use Netto\Models\ExchangeRate;
-use Netto\Services\RateProviders\CbrRussia;
-use Throwable;
+use Netto\Exceptions\NettoException;
+use Netto\Models\{Currency, ExchangeRate};
+use Netto\Services\ExchangeRateProviders\Abstract\ExchangeRatesProvider;
 
 abstract class CurrencyService
 {
-    public const DEFAULT = 'RUB';
-
     /**
+     * Convert currency value.
+     *
      * @param int|float $amount
      * @param string $from
-     * @param string $to
+     * @param string|null $to
      * @param int $precision
-     * @return int|float|null
+     * @return float
      */
-    public static function convertValue(int|float $amount, string $from, string $to, int $precision = 4): int|float|null
+    public static function convert(int|float $amount, string $from, ?string $to = null, int $precision = 2): float
     {
+        if (is_null($to)) {
+            $to = get_default_currency_code();
+        }
+
         $rates = self::getRates();
 
         if ($from == $to) {
             return $amount;
         }
 
-        if (!isset($rates[$from][$to])) {
-            return null;
-        }
-
-        return round($amount * $rates[$from][$to], $precision);
+        return round(($amount * $rates[$from][$to]['value']), $precision);
     }
 
     /**
-     * @return string
-     */
-    public static function getDefaultCode(): string
-    {
-        static $return;
-
-        if (is_null($return)) {
-            foreach (self::getList() as $code => $item) {
-                if ($item['is_default']) {
-                    $return = $code;
-                    break;
-                }
-            }
-        }
-
-        return $return;
-    }
-
-    /**
-     * @return int
-     */
-    public static function getDefaultId(): int
-    {
-        static $return;
-
-        if (is_null($return)) {
-            foreach (self::getList() as $item) {
-                if ($item['is_default']) {
-                    $return = $item['id'];
-                    break;
-                }
-            }
-        }
-
-        return $return;
-    }
-
-    /**
+     * Return the list of currencies.
+     *
      * @return array
      */
     public static function getList(): array
     {
         static $return;
-
         if (is_null($return)) {
             $return = [];
 
@@ -94,16 +56,49 @@ abstract class CurrencyService
     }
 
     /**
+     * Return list of currency rates.
+     *
      * @return array
      */
     public static function getRates(): array
     {
         static $rates;
-
         if (is_null($rates)) {
             $rates = [];
+
+            // direct
             foreach (ExchangeRate::with(['source', 'target'])->get() as $model) {
-                $rates[$model->target->slug][$model->source->slug] = $model->value;
+                /** @var ExchangeRate $model */
+                $rates[$model->source->getAttribute('slug')][$model->target->getAttribute('slug')] = [
+                    'date' => $model->getAttribute('date'),
+                    'provider' => $model->getAttribute('provider'),
+                    'value' => $model->getAttribute('value') / $model->getAttribute('base')
+                ];
+            }
+
+            foreach ($rates as $key => $value) {
+                foreach ($value as $key2 => $value2) {
+                    // reverse
+                    if (!isset($rates[$key2][$key])) {
+                        $source = $rates[$key][$key2];
+                        $source['value'] = 1 / $source['value'];
+                        $rates[$key2][$key] = $source;
+                    }
+
+
+                    // cross
+                    foreach (get_currency_list() as $code => $currency) {
+                        if (in_array($code, [$key, $key2])) {
+                            continue;
+                        }
+
+                        if (!isset($rates[$code][$key])) {
+                            $source = $rates[$code][$key2];
+                            $source['value'] *= $rates[$key2][$key]['value'];
+                            $rates[$code][$key] = $source;
+                        }
+                    }
+                }
             }
         }
 
@@ -111,28 +106,26 @@ abstract class CurrencyService
     }
 
     /**
+     * Update currency rates from configured providers.
+     *
      * @return void
-     * @throws Throwable
+     * @throws NettoException
      */
-    public static function loadRates(): void
+    public static function update(): void
     {
-        $class = config('cms-currency.provider', CbrRussia::class);
-        $service = new $class();
-
-        $list = [];
-        foreach (self::getList() as $code => $item) {
-            $list[$code] = $item['id'];
+        $config = config('cms-currency', []);
+        if (empty($config)) {
+            return;
         }
 
-        if (!array_key_exists(self::DEFAULT, $list)) {
-            $model = new Currency();
-            $model->setAttribute('name', self::DEFAULT);
-            $model->setAttribute('slug', self::DEFAULT);
-            $model->save();
-
-            $list[$model->slug] = $model->id;
+        foreach ($config as $item) {
+            try {
+                /** @var ExchangeRatesProvider $provider */
+                $provider = new $item['provider']();
+                $provider->update($item['codes'], $item['slug']);
+            } catch (\Throwable $throwable) {
+                throw new NettoException($throwable->getMessage());
+            }
         }
-
-        $service->load($list);
     }
 }

@@ -1,23 +1,33 @@
-<x-cms::layout.admin :title="$title" :chain="$chain">
+<x-cms::layout.admin :head="$head" :url="$url" :chain="$chain">
     <x-cms::list
-        :url="route('admin.currency.list', [], false)"
         id="currency"
+        :url="route('admin.currency.list')"
         :columns="[
-            'id' => __('cms::main.attr_id'),
-            'name' => __('cms::main.attr_name'),
-            'slug' => __('cms::main.attr_slug'),
-            'is_default' => __('cms::main.attr_is_default'),
+            'id' => __('main.attr_id'),
+            'sort' => __('main.attr_sort'),
+            'name' => __('main.attr_name'),
+            'slug' => __('main.attr_slug'),
+            'is_default' => __('main.attr_is_default'),
         ]"
-        :default="['name']"
+        :default="['sort', 'name', 'slug']"
+        :defaultSort="['sort' => 'asc']"
+        :title="__('main.list_currency')"
+        :actions="[
+            'create' => route('admin.currency.create'),
+            'delete' => route('admin.currency.delete'),
+        ]"
     />
 
-    @if (!empty($rates))
-        <p class="header text-big">{{ __('cms-currency::main.exchange_rates') }}</p>
+    <p class="header text-big">{{ __('main.exchange_rates') }}</p>
+
+    @if ($rates)
         <table class="info">
             <thead>
             <tr>
-                <th class="col-6"><span class="text-small">{{ __('cms-currency::main.currency') }}</span></th>
-                <th class="col-6"><span class="text-small">{{ __('cms-currency::main.exchange_rate') }}</span></th>
+                <th class="col-3"><span class="text-small">{{ __('main.currency') }}</span></th>
+                <th class="col-3"><span class="text-small">{{ __('main.exchange_rate') }}</span></th>
+                <th class="col-6"><span class="text-small">{{ __('main.attr_updated_at') }}</span></th>
+                <th class="col-3"><span class="text-small">{{ __('main.exchange_provider') }}</span></th>
             </tr>
             </thead>
             <tbody>
@@ -25,9 +35,15 @@
                 <tr>
                     <td><span class="text">{{ $rate['from'] }}</span></td>
                     <td><span class="text">{{ $rate['to'] }}</span></td>
+                    <td><span class="text">{{ $rate['date'] }}</span></td>
+                    <td><span class="text">{{ $rate['provider'] }}</span></td>
                 </tr>
             @endforeach
             </tbody>
         </table>
+    @else
+        <p class="text">
+            {{ __('main.general_list_empty') }}
+        </p>
     @endif
 </x-cms::layout.admin>

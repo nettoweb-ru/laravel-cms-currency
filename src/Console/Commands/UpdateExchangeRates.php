@@ -2,10 +2,11 @@
 
 namespace Netto\Console\Commands;
 
-use Illuminate\Console\Command;
+use Netto\Console\Commands\Abstract\Command as BaseCommand;
+use Netto\Exceptions\NettoException;
 use Netto\Services\CurrencyService;
 
-class UpdateExchangeRates extends Command
+class UpdateExchangeRates extends BaseCommand
 {
     protected $signature = 'cms:refresh-currency';
     protected $description = 'Update currency rates';
@@ -13,12 +14,12 @@ class UpdateExchangeRates extends Command
     /**
      * @return void
      */
-    public function handle(): void
+    protected function action(): void
     {
         try {
-            CurrencyService::loadRates();
-        } catch (\Throwable $throwable) {
-            $this->error($throwable->getMessage());
+            CurrencyService::update();
+        } catch (NettoException $exception) {
+            $this->error($exception->getMessage());
         }
     }
 }

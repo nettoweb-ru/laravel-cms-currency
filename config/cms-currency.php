@@ -1,4 +1,8 @@
 <?php
 return [
-    'provider' => \Netto\Services\RateProviders\CbrRussia::class,
+    [
+        'slug' => 'cbr',
+        'provider' => \Netto\Services\ExchangeRateProviders\CbrRussia::class,
+        'codes' => ['RUB'],
+    ],
 ];
