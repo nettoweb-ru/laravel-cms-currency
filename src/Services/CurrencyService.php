@@ -113,7 +113,7 @@ abstract class CurrencyService
      */
     public static function update(): void
     {
-        $config = config('cms-currency', []);
+        $config = config('cms-currency.update');
         if (empty($config)) {
             return;
         }

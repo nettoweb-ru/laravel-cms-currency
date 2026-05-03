@@ -32,6 +32,14 @@ class CurrencyServiceProvider extends ServiceProvider
     /**
      * @return void
      */
+    public function register(): void
+    {
+        $this->mergeConfigFrom(__DIR__ . '/../config/cms-currency.php', 'cms-currency');
+    }
+
+    /**
+     * @return void
+     */
     private function registerPublishedPaths(): void
     {
         $this->publishes([

@@ -19,8 +19,8 @@ class CurrencyRequest extends FormRequest
             ]),
             [
                 'sort' => ['integer', 'min:0', 'max:255'],
-                'slug' => ['required', 'string', 'size:3', 'uppercase', 'alpha:ascii', Rule::unique(Currency::class, 'slug')->ignore($this->get('id'))],
-                'is_default' => ['in:1,0', new UniqueDefaultEntity(Currency::class, $this->get('id'), $this->get('is_default'))],
+                'slug' => ['required', 'string', 'size:3', 'uppercase', 'alpha:ascii', Rule::unique(Currency::class, 'slug')->ignore($this->input('id'))],
+                'is_default' => ['in:1,0', new UniqueDefaultEntity(Currency::class, $this->input('id'), $this->input('is_default'))],
             ]
         );
     }
