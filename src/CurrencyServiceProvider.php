@@ -52,6 +52,6 @@ class CurrencyServiceProvider extends ServiceProvider
      */
     private function registerScheduledTasks(): void
     {
-        Schedule::command(UpdateExchangeRates::class)->dailyAt(config('cms.schedule.daily', 1));
+        Schedule::command(UpdateExchangeRates::class)->daily();
     }
 }
